@@ -29,6 +29,8 @@ def fetch_telegram(url, page_name):
         info_post = BeautifulSoup(str(info_post[0]), 'html.parser')
         media = soup[i].find_all("i", {"class": "link_preview_image"})
 
+        if content.find_all('a') == []:
+            continue
         content = content.find_all('a')[0]
         url = content.get('href')
         origin = info_post.find_all('a')[0].get('href')
