@@ -25,6 +25,7 @@
   },
   "dependencies": {
     "sirv-cli": "^1.0.0",
+    "svelte-copy-to-clipboard": "^0.2.5",
     "svelte-infinite-scroll": "^1.4.1"
   }
 }

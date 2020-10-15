@@ -1496,6 +1496,11 @@ supports-color@^7.1.0:
   dependencies:
     has-flag "^4.0.0"
 
+svelte-copy-to-clipboard@^0.2.5:
+  version "0.2.5"
+  resolved "https://registry.yarnpkg.com/svelte-copy-to-clipboard/-/svelte-copy-to-clipboard-0.2.5.tgz#4fd5c89a6415b7f6a4e153a9896b50b2dee12611"
+  integrity sha512-EAULxib4pRa59nyz25dDKITgSAVkrNVojRZVCSO8MIFd5GJljghJaCTIe/7R+O3GxKYIwJ3XHDNoY1hfjJeyEg==
+
 svelte-infinite-scroll@^1.4.1:
   version "1.4.1"
   resolved "https://registry.yarnpkg.com/svelte-infinite-scroll/-/svelte-infinite-scroll-1.4.1.tgz#327f54e7d15bd1f03dcb5a2f2fd41db9b9406ff7"
