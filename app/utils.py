@@ -30,7 +30,7 @@ def get_title(content):
 
 def link_expander(url, origin='twitter'):
     try:
-        resp = requests.get(url, headers=HEADERS, timeout=10)
+        resp = requests.get(url, headers=HEADERS, timeout=30, verify=False)
         return (get_title(resp.text), resp.url)
     except Exception as e:
         return ('BAD_LINK', '')

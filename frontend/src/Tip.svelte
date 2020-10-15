@@ -1,30 +1,32 @@
 <script>
+  import { fade, fly } from "svelte/transition";
+
   export let tip;
   export let show_all;
   export let setMedia;
   export let markRead;
 
   const CATEGORYS = {
-    0: "web"
+    0: "web",
   };
 </script>
 
 {#if show_all || !tip.read}
-  <div class="p-2 -m-1 group">
+  <div class="p-2 -m-1 group" out:fade>
     <div class="overflow-auto bg-white border-2 border-gray-300 rounded-lg">
       <div class="relative p-2">
         {#if tip.media}
           <img
             class="object-cover object-center w-full rounded-lg lg:h-48 md:h-36"
             src={tip.media}
-            on:click={e => setMedia(tip.media)}
+            on:click={(e) => setMedia(tip.media)}
             alt={tip.title} />
         {/if}
         {#if !tip.read}
           <div
             class="absolute top-0 right-0 flex items-center justify-center h-10 m-2">
             <button
-              on:click={e => markRead(tip)}
+              on:click={(e) => markRead(tip)}
               class="flex items-center justify-center invisible w-10 h-10 p-0 border-0 rounded-full group-hover:visible group-hover:inline-flex group-hover:text-white group-hover:bg-green-400">
               <svg
                 class="w-6 h-6"

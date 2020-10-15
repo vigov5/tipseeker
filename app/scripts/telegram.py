@@ -17,7 +17,7 @@ def fetch_telegram(url, page_name):
     headers = {
         "User-Agent": 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:71.0) Gecko/20100101 Firefox/71.0'
     }
-    resp = s.get(url, headers=headers)
+    resp = s.get(url, headers=headers, verify=False)
     soup = BeautifulSoup(resp.text, 'html.parser')
     soup = soup.find_all("div", {"class": "tgme_widget_message_bubble"})
     for i in range(len(soup)):
