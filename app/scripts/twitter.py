@@ -40,18 +40,14 @@ def fetch_twitter(twitter_api, query):
             else:
                 link_info['origin'] = "https://twitter.com/i/web/status/{}#link{}".format(
                     tweet_info.id, idx)
-                if title == "BAD_LINK":
-                    link_info['title'] = "[Broken link] {}".format(item)
-                    link_info['url'] = link_info['origin']
-                    link_info['status'] = LINK.STATUS_ERROR
-                else:
+                if title != "BAD_LINK":
                     link_info['title'] = title.encode('utf-8')
                     link_info['url'] = final_url
                     link_info['status'] = LINK.STATUS_DONE
-                link_info['media'] = media
-                link_info['content'] = tweet.encode('utf-8')
-                link_info['read'] = LINK.UNREAD
-                link_info['kind'] = LINK.KIND_LINK
-                link_info['category'] = LINK.CATEGORY_WEB
-                link_info['created_at'] = tweet_info.created_at
-                Link.insert_from(link_info)
+                    link_info['media'] = media
+                    link_info['content'] = tweet.encode('utf-8')
+                    link_info['read'] = LINK.UNREAD
+                    link_info['kind'] = LINK.KIND_LINK
+                    link_info['category'] = LINK.CATEGORY_WEB
+                    link_info['created_at'] = tweet_info.created_at
+                    Link.insert_from(link_info)
