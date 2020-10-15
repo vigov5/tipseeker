@@ -4,7 +4,7 @@ sys.path.append('../../')  # nopep8
 import tweepy
 from app.link.models import Link
 from app.link import constants as LINK
-from app.utils import get_title, link_expander, remove_query_str
+from app.utils import get_title, link_expander, clean_up_url
 
 
 def fetch_twitter(twitter_api, query):
@@ -34,6 +34,7 @@ def fetch_twitter(twitter_api, query):
         for idx, item in enumerate(links):
             link_info = {}
             (title, final_url) = link_expander(item)
+            final_url = clean_up_url(final_url)
             if Link.query.filter(Link.url == final_url).first():
                 continue
             else:

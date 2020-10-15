@@ -8,7 +8,7 @@ from bs4 import BeautifulSoup
 import json
 from app.link import constants as LINK
 from app.link.models import Link
-from app.utils import get_title, link_expander, remove_query_str
+from app.utils import get_title, link_expander, clean_up_url
 
 
 def fetch_telegram(url, page_name):
@@ -54,6 +54,7 @@ def fetch_telegram(url, page_name):
                 "status": LINK.STATUS_DONE,
                 "title": page_name,
                 "url": url}
+        info['url'] = clean_up_url(info['url'])
         if Link.query.filter(Link.url == info['url']).first():
             continue
         else:
