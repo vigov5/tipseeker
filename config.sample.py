@@ -9,10 +9,8 @@ CSRF_SESSION_KEY = 'place_your_csrf_key_here'
 
 CONSUMER_KEY = ''
 CONSUMER_SECRET = ''
-TWITTER_QUERY = ''
+TWITTER_QUERY = '#bugbountytips'
 
 TELEGRAM_CHANNELS = [
-    ('https://t.me/thebugbountyhunter', 'The Bug Bounty Hunter')
+    ('https://t.me/s/thebugbountyhunter', 'The Bug Bounty Hunter')
 ]
-
-INTERVAL = 60
