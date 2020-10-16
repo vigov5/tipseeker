@@ -6,9 +6,17 @@ sys.path.append('../../')  # nopep8
 import cssutils
 from bs4 import BeautifulSoup
 import json
+from app import app
 from app.link import constants as LINK
 from app.link.models import Link
 from app.utils import get_title, link_expander, clean_up_url
+from app.scripts import cron_module
+
+
+@cron_module.cli.command('telegram')
+def fetch_all():
+    for url, page_name in app.config['TELEGRAM_CHANNELS']:
+        fetch_telegram(url, page_name)
 
 
 def fetch_telegram(url, page_name):

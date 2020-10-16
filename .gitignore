@@ -129,4 +129,3 @@ dmypy.json
 .pyre/
 config.py
 .vscode/
-frontend/src/config.js

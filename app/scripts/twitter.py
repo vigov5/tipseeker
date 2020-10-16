@@ -2,12 +2,16 @@ import sys
 sys.path.append('../../')  # nopep8
 
 import tweepy
+from app import app, twitter_api
 from app.link.models import Link
 from app.link import constants as LINK
 from app.utils import get_title, link_expander, clean_up_url
+from app.scripts import cron_module
 
 
-def fetch_twitter(twitter_api, query):
+@cron_module.cli.command('twitter')
+def fetch_twitter():
+    query = app.config['TWITTER_QUERY']
     print('Start fetch twitter with query {}'.format(query))
     for tweet_info in tweepy.Cursor(twitter_api.search, q=query, lang='en', tweet_mode='extended').items(100):
         retweeted_status = False
