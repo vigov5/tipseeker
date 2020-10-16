@@ -13,7 +13,7 @@ link_module = Blueprint('link', __name__)
 def index():
     try:
         page = int(request.args.get('page'))
-        links = Link.query.order_by(desc(Link.id)).paginate(
+        links = Link.query.filter(Link.read == LINK.UNREAD).order_by(desc(Link.id)).paginate(
             page=page, per_page=10).items
     except Exception as e:
         print(e)
