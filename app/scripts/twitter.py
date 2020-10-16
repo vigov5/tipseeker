@@ -58,11 +58,10 @@ def fetch_twitter():
                     Link.insert_from(link_info)
                     created = True
 
-        if not created and not Link.query.filter(Link.content == tweet.encode('utf-8')).first():
+        final_url = "https://twitter.com/i/web/status/{}".format(tweet_info.id)
+        if not created and not Link.query.filter(Link.content == tweet.encode('utf-8')).first() and not Link.query.filter(Link.url == final_url).first():
             link_info = {}
             link_info['title'] = 'Tip from Twitter'
-            link_info['url'] = "https://twitter.com/i/web/status/{}".format(
-                tweet_info.id)
             link_info['origin'] = link_info['url']
             link_info['status'] = LINK.STATUS_DONE
             link_info['media'] = media
