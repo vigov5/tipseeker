@@ -46,4 +46,5 @@ Every 5 minutes
 
 - [ ] Better filtering
 - [ ] Chrome/Firefox extension send link to app
+- [ ] Apply NLP to detect if tip is worth reading
 - [ ] More source
