@@ -5,11 +5,11 @@ Simple app to gather all #bugbountytips from Twitter and Telegram.
 ![screenshot](https://i.imgur.com/4BuzAM5l.png)
 
 ## Backend
-- require Python > 3.6
+- require Python >= 3.6
 
 ```
 virtualenv --python=python3 venv
-
+source venv/bin/active
 pip install -r requirements.txt
 ```
 
