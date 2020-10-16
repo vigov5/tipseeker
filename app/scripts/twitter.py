@@ -45,6 +45,7 @@ def fetch_twitter():
             (title, final_url) = link_expander(item)
             final_url = clean_up_url(final_url)
             if Link.query.filter(Link.url == final_url).first():
+                created = True
                 pass
             else:
                 link_info['origin'] = "{}#link{}".format(origin_tweet, idx)
