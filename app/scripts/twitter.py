@@ -14,11 +14,10 @@ def fetch_twitter():
     query = app.config['TWITTER_QUERY']
     print('Start fetch twitter with query {}'.format(query))
     for tweet_info in tweepy.Cursor(twitter_api.search, q=query, lang='en', tweet_mode='extended').items(100):
-        retweeted_status = False
         media = ''
         links = []
+        origin_tweet = ''
         if 'retweeted_status' in dir(tweet_info):
-            retweeted_status = True
             tweet = tweet_info.retweeted_status.full_text
             if 'media' in tweet_info.retweeted_status.entities:
                 for m in tweet_info.retweeted_status.entities['media']:
@@ -26,6 +25,9 @@ def fetch_twitter():
             for u in tweet_info.retweeted_status.entities['urls']:
                 links.append(u['expanded_url'])
                 tweet = tweet.replace(u['url'], u['expanded_url'])
+
+            origin_tweet = "https://twitter.com/i/web/status/{}".format(
+                tweet_info.retweeted_status.id)
         else:
             tweet = tweet_info.full_text
             if 'media' in tweet_info.entities:
@@ -34,6 +36,8 @@ def fetch_twitter():
             for u in tweet_info.entities['urls']:
                 links.append(u['expanded_url'])
                 tweet = tweet.replace(u['url'], u['expanded_url'])
+            origin_tweet = "https://twitter.com/i/web/status/{}".format(
+                tweet_info.id)
 
         created = False
         for idx, item in enumerate(links):
@@ -43,8 +47,7 @@ def fetch_twitter():
             if Link.query.filter(Link.url == final_url).first():
                 pass
             else:
-                link_info['origin'] = "https://twitter.com/i/web/status/{}#link{}".format(
-                    tweet_info.id, idx)
+                link_info['origin'] = "{}#link{}".format(origin_tweet, idx)
                 if title != "BAD_LINK":
                     link_info['title'] = title.encode('utf-8')
                     link_info['url'] = final_url
@@ -58,8 +61,9 @@ def fetch_twitter():
                     Link.insert_from(link_info)
                     created = True
 
-        final_url = "https://twitter.com/i/web/status/{}".format(tweet_info.id)
-        print(created, Link.query.filter(Link.content == tweet.encode('utf-8')).first() != None, Link.query.filter(Link.url == final_url).first() != None, final_url)
+        final_url = origin_tweet
+        print(created, Link.query.filter(Link.content == tweet.encode('utf-8')).first()
+              != None, Link.query.filter(Link.url == final_url).first() != None, final_url)
         if not created and not Link.query.filter(Link.content == tweet.encode('utf-8')).first() and not Link.query.filter(Link.url == final_url).first():
             link_info = {}
             link_info['title'] = 'Tip from Twitter'
