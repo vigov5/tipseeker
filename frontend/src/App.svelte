@@ -23,24 +23,22 @@
     fetchData();
   });
 
-  const setMedia = (media) => {
+  const setMedia = media => {
     console.log(media);
     viewing_media = media;
   };
 
-  const markRead = async (tip) => {
-    let ret = await (
-      await fetch(`${BASE_URL}/link/mark_read`, {
-        method: "POST",
-        body: JSON.stringify({
-          id: tip.id,
-        }),
+  const markRead = async tip => {
+    let ret = await (await fetch(`${BASE_URL}/link/mark_read`, {
+      method: "POST",
+      body: JSON.stringify({
+        id: tip.id
       })
-    ).json();
+    })).json();
 
     if (ret["status"] == "OK") {
       unread_count = ret["unread_count"];
-      tips.map((t) => {
+      tips.map(t => {
         if (t.id == tip.id) t.read = 1;
       });
       tips = tips;
@@ -51,6 +49,7 @@
 </script>
 
 <style>
+
 </style>
 
 <svelte:head>
@@ -61,12 +60,12 @@
   <Nav bind:show_all {unread_count} />
   {#if viewing_media}
     <div
-      class="fixed z-50 origin-center transform -translate-x-1/2 -translate-y-1/2"
+      class="fixed z-50 max-h-screen origin-center transform -translate-x-1/2 -translate-y-1/2"
       style="left: 50%; top: 50%;">
       <img class="border border-gray-500" src={viewing_media} alt="" />
       <div
         class="absolute top-0 right-0 m-2 bg-white rounded-full"
-        on:click={(e) => (viewing_media = '')}>
+        on:click={e => (viewing_media = '')}>
         <svg viewBox="0 0 20 20" fill="currentColor" class="w-6 h-6">
           <path
             fill-rule="evenodd"
