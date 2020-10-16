@@ -35,40 +35,40 @@ def fetch_twitter():
                 links.append(u['expanded_url'])
                 tweet = tweet.replace(u['url'], u['expanded_url'])
 
-            created = False
-            for idx, item in enumerate(links):
-                link_info = {}
-                (title, final_url) = link_expander(item)
-                final_url = clean_up_url(final_url)
-                if Link.query.filter(Link.url == final_url).first():
-                    pass
-                else:
-                    link_info['origin'] = "https://twitter.com/i/web/status/{}#link{}".format(
-                        tweet_info.id, idx)
-                    if title != "BAD_LINK":
-                        link_info['title'] = title.encode('utf-8')
-                        link_info['url'] = final_url
-                        link_info['status'] = LINK.STATUS_DONE
-                        link_info['media'] = media
-                        link_info['content'] = tweet.encode('utf-8')
-                        link_info['read'] = LINK.UNREAD
-                        link_info['kind'] = LINK.KIND_LINK
-                        link_info['category'] = LINK.CATEGORY_WEB
-                        link_info['created_at'] = tweet_info.created_at
-                        Link.insert_from(link_info)
-                        created = True
+        created = False
+        for idx, item in enumerate(links):
+            link_info = {}
+            (title, final_url) = link_expander(item)
+            final_url = clean_up_url(final_url)
+            if Link.query.filter(Link.url == final_url).first():
+                pass
+            else:
+                link_info['origin'] = "https://twitter.com/i/web/status/{}#link{}".format(
+                    tweet_info.id, idx)
+                if title != "BAD_LINK":
+                    link_info['title'] = title.encode('utf-8')
+                    link_info['url'] = final_url
+                    link_info['status'] = LINK.STATUS_DONE
+                    link_info['media'] = media
+                    link_info['content'] = tweet.encode('utf-8')
+                    link_info['read'] = LINK.UNREAD
+                    link_info['kind'] = LINK.KIND_LINK
+                    link_info['category'] = LINK.CATEGORY_WEB
+                    link_info['created_at'] = tweet_info.created_at
+                    Link.insert_from(link_info)
+                    created = True
 
-            if not created and not Link.query.filter(Link.content == tweet.encode('utf-8')).first():
-                link_info = {}
-                link_info['title'] = 'Tip from Twitter'
-                link_info['url'] = "https://twitter.com/i/web/status/{}".format(
-                    tweet_info.id)
-                link_info['origin'] = link_info['url']
-                link_info['status'] = LINK.STATUS_DONE
-                link_info['media'] = media
-                link_info['content'] = tweet.encode('utf-8')
-                link_info['read'] = LINK.UNREAD
-                link_info['kind'] = LINK.KIND_LINK
-                link_info['category'] = LINK.CATEGORY_WEB
-                link_info['created_at'] = tweet_info.created_at
-                Link.insert_from(link_info)
+        if not created and not Link.query.filter(Link.content == tweet.encode('utf-8')).first():
+            link_info = {}
+            link_info['title'] = 'Tip from Twitter'
+            link_info['url'] = "https://twitter.com/i/web/status/{}".format(
+                tweet_info.id)
+            link_info['origin'] = link_info['url']
+            link_info['status'] = LINK.STATUS_DONE
+            link_info['media'] = media
+            link_info['content'] = tweet.encode('utf-8')
+            link_info['read'] = LINK.UNREAD
+            link_info['kind'] = LINK.KIND_LINK
+            link_info['category'] = LINK.CATEGORY_WEB
+            link_info['created_at'] = tweet_info.created_at
+            Link.insert_from(link_info)

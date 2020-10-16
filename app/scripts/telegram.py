@@ -54,7 +54,7 @@ def fetch_telegram(url, page_name):
             url_image = ''
         info = {"category": LINK.CATEGORY_WEB,
                 "content": content,
-                "created_at": datetime.fromisoformat(post_time),
+                "created_at": datetime.strptime(post_time[:-6], "%Y-%m-%dT%H:%M:%S"),
                 "kind": LINK.KIND_LINK,
                 "media": url_image,
                 "origin": origin,
