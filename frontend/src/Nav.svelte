@@ -1,6 +1,7 @@
 <script>
   export let show_all;
   export let unread_count;
+  export let show_read;
 
   $: button_text = show_all ? "Hide Read" : "Show All";
 </script>
@@ -36,8 +37,13 @@
     </nav>
     <button
       class="inline-flex items-center px-3 py-1 mt-4 text-base bg-gray-200 border-0 rounded focus:outline-none hover:bg-gray-300 md:mt-0"
-      on:click={e => (show_all = !show_all)}>
+      on:click={e => {show_all = !show_all; show_read = false; }}>
       {button_text}
+    </button>
+     <button
+      class="inline-flex items-center px-3 py-1 mt-4 text-base bg-gray-200 border-0 rounded focus:outline-none hover:bg-gray-300 md:mt-0"
+      on:click={e => (show_read = true)}>
+      Show Read
     </button>
   </div>
 </header>

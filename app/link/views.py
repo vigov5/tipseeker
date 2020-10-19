@@ -34,3 +34,17 @@ def mark_read():
         return jsonify({'status': 'OK', 'unread_count': Link.get_unread_count()})
     except Exception as e:
         return jsonify({'status': 'Error', 'msg': str(e)})
+
+
+@link_module.route('/show_read', methods=['GET'])
+def show_read():
+    try:
+        page = int(request.args.get('page'))
+        links = Link.query.filter(Link.read == LINK.READ).order_by(desc(Link.id)).paginate(
+            page=page, per_page=10).items
+    except Exception as e:
+        print(e)
+        page = 1
+        links = []
+
+    return jsonify({'unread_count': Link.get_unread_count(), 'links': links})
