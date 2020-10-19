@@ -33,17 +33,24 @@ def fetch_telegram(url, page_name):
             "div", {"class": "tgme_widget_message_info"})
         mess_text = soup[i].find_all(
             "div", {"class": "tgme_widget_message_text"})
+
+        # remove posts with only images
+        if mess_text == []:
+            continue
         content = BeautifulSoup(str(mess_text[0]), 'html.parser')
         info_post = BeautifulSoup(str(info_post[0]), 'html.parser')
         media = soup[i].find_all("i", {"class": "link_preview_image"})
 
+        # Post announcements removed
         if content.find_all('a') == []:
             continue
-        content = content.find_all('a')[0]
-        url = content.get('href')
+
+        get_url = content.find_all('a')[0]
+        url = get_url.get('href')
         origin = info_post.find_all('a')[0].get('href')
-        content = str(mess_text[0].get_text())[:-len(url)]
+        content = mess_text[0].decode_contents()
         post_time = info_post.find_all('time')[0].get('datetime')
+
         if media != []:
             div_style = BeautifulSoup(
                 str(media[0]), 'html.parser').find('i')['style']
