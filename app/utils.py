@@ -13,7 +13,7 @@ HEADERS = {
     'Sec-Fetch-User': '?1'
 }
 
-RED_ONE = ['medium.com']
+RED_ONE = ['medium.com', 'itnext.io']
 BLUE_ONE = ['youtube.com']
 
 
