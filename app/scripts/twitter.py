@@ -1,18 +1,24 @@
+from app.scripts import cron_module
+from app.utils import get_title, link_expander, clean_up_url
+from app.link import constants as LINK
+from app.link.models import Link
+from app import app, twitter_api
+from difflib import SequenceMatcher
+import tweepy
 import sys
 sys.path.append('../../')  # nopep8
+import urllib3
 
-import tweepy
-from app import app, twitter_api
-from app.link.models import Link
-from app.link import constants as LINK
-from app.utils import get_title, link_expander, clean_up_url
-from app.scripts import cron_module
+urllib3.disable_warnings()
 
 
 @cron_module.cli.command('twitter')
 def fetch_twitter():
     query = app.config['TWITTER_QUERY']
     print('Start fetch twitter with query {}'.format(query))
+    cached_contents = [content for (
+        content, ) in Link.query.with_entities(Link.content).all()]
+
     for tweet_info in tweepy.Cursor(twitter_api.search, q=query, lang='en', tweet_mode='extended').items(100):
         media = ''
         links = []
@@ -39,6 +45,8 @@ def fetch_twitter():
             origin_tweet = "https://twitter.com/i/web/status/{}".format(
                 tweet_info.id)
 
+        tweet_content = tweet.encode('utf-8')
+
         created = False
         for idx, item in enumerate(links):
             link_info = {}
@@ -54,7 +62,7 @@ def fetch_twitter():
                     link_info['url'] = final_url
                     link_info['status'] = LINK.STATUS_DONE
                     link_info['media'] = media
-                    link_info['content'] = tweet.encode('utf-8')
+                    link_info['content'] = tweet_content
                     link_info['read'] = LINK.UNREAD
                     link_info['kind'] = LINK.KIND_LINK
                     link_info['category'] = LINK.CATEGORY_WEB
@@ -62,17 +70,29 @@ def fetch_twitter():
                     Link.insert_from(link_info)
                     created = True
 
-        final_url = origin_tweet
-        print(created, Link.query.filter(Link.content == tweet.encode('utf-8')).first()
-              != None, Link.query.filter(Link.url == final_url).first() != None, final_url)
-        if not created and not Link.query.filter(Link.content == tweet.encode('utf-8')).first() and not Link.query.filter(Link.url == final_url).first():
+        tweet_url = origin_tweet
+
+        similar_content = False
+        for c in cached_contents:
+            if SequenceMatcher(None, c, tweet_content).ratio() >= 0.85:
+                similar_content = True
+                break
+
+        same_url = Link.query.filter(Link.url == tweet_url).first() != None
+
+        print("{} -> Created: {}, Similar content: {}, Same URL: {}".format(
+            tweet_url, created, similar_content, same_url
+        ))
+        cached_contents.append(tweet_content)
+
+        if not created and not similar_content and not same_url:
             link_info = {}
             link_info['title'] = 'Tip from Twitter'
-            link_info['url'] = final_url
-            link_info['origin'] = final_url
+            link_info['url'] = tweet_url
+            link_info['origin'] = tweet_url
             link_info['status'] = LINK.STATUS_DONE
             link_info['media'] = media
-            link_info['content'] = tweet.encode('utf-8')
+            link_info['content'] = tweet_content
             link_info['read'] = LINK.UNREAD
             link_info['kind'] = LINK.KIND_LINK
             link_info['category'] = LINK.CATEGORY_WEB
