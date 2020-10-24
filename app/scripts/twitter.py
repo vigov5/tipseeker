@@ -74,7 +74,7 @@ def fetch_twitter():
 
         similar_content = False
         for c in cached_contents:
-            if SequenceMatcher(None, c, tweet_content).ratio() >= 0.85:
+            if SequenceMatcher(None, c, tweet_content).ratio() >= 0.7:
                 similar_content = True
                 break
 
