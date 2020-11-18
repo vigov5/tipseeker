@@ -47,12 +47,18 @@ def fetch_twitter():
 
         tweet_content = tweet.encode('utf-8')
 
+        similar_content = False
+        for c in cached_contents:
+            if SequenceMatcher(None, c, tweet_content).ratio() >= 0.7:
+                similar_content = True
+                break
+
         created = False
         for idx, item in enumerate(links):
             link_info = {}
             (title, final_url) = link_expander(item)
             final_url = clean_up_url(final_url)
-            if Link.query.filter(Link.url == final_url).first():
+            if Link.query.filter(Link.url == final_url).first() or similar_content:
                 created = True
                 pass
             else:
@@ -69,14 +75,7 @@ def fetch_twitter():
                     link_info['created_at'] = tweet_info.created_at
                     Link.insert_from(link_info)
                     created = True
-
         tweet_url = origin_tweet
-
-        similar_content = False
-        for c in cached_contents:
-            if SequenceMatcher(None, c, tweet_content).ratio() >= 0.7:
-                similar_content = True
-                break
 
         same_url = Link.query.filter(Link.url == tweet_url).first() != None
 
