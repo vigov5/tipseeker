@@ -14,3 +14,5 @@ TWITTER_QUERY = '#bugbountytips'
 TELEGRAM_CHANNELS = [
     ('https://t.me/s/thebugbountyhunter', 'The Bug Bounty Hunter')
 ]
+
+IGNORED_KEYWORDS = ['tryhackme', 'appeared first on']

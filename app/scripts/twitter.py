@@ -48,9 +48,15 @@ def fetch_twitter():
         tweet_content = tweet.encode('utf-8')
 
         similar_content = False
+        ignored_content = False
         for c in cached_contents:
-            if SequenceMatcher(None, c, tweet_content).ratio() >= 0.7:
+            if SequenceMatcher(None, c, tweet_content).ratio() >= 0.6:
                 similar_content = True
+                break
+
+        for kw in app.config['IGNORED_KEYWORDS']:
+            if kw in tweet_content.lower():
+                ignored_content = True
                 break
 
         created = False
@@ -58,7 +64,7 @@ def fetch_twitter():
             link_info = {}
             (title, final_url) = link_expander(item)
             final_url = clean_up_url(final_url)
-            if Link.query.filter(Link.url == final_url).first() or similar_content:
+            if Link.query.filter(Link.url == final_url).first() or similar_content or ignored_content:
                 created = True
                 pass
             else:
@@ -84,7 +90,7 @@ def fetch_twitter():
         ))
         cached_contents.append(tweet_content)
 
-        if not created and not similar_content and not same_url:
+        if not created and not similar_content and not same_url and not ignored_content:
             link_info = {}
             link_info['title'] = 'Tip from Twitter'
             link_info['url'] = tweet_url
