@@ -55,7 +55,7 @@ def fetch_twitter():
                 break
 
         for kw in app.config['IGNORED_KEYWORDS']:
-            if kw in tweet_content.lower():
+            if kw in tweet_content.lower().decode('utf-8'):
                 ignored_content = True
                 break
 
@@ -85,8 +85,9 @@ def fetch_twitter():
 
         same_url = Link.query.filter(Link.url == tweet_url).first() != None
 
-        print("{} -> Created: {}, Similar content: {}, Same URL: {}".format(
-            tweet_url, created, similar_content, same_url
+        print("{} -> Created: {}, Similar content: {}, Same URL: {}, Ignored: {} => {}".format(
+            tweet_url, created, similar_content, same_url, ignored_content,
+            not created and not similar_content and not same_url and not ignored_content
         ))
         cached_contents.append(tweet_content)
 
