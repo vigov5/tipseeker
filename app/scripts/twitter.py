@@ -17,7 +17,7 @@ def fetch_twitter():
     query = app.config['TWITTER_QUERY']
     print('Start fetch twitter with query {}'.format(query))
     cached_contents = [content for (
-        content, ) in Link.query.with_entities(Link.content).all()]
+        content, ) in Link.query.with_entities(Link.content).order_by(Link.id.desc()).limit(100)]
 
     for tweet_info in tweepy.Cursor(twitter_api.search, q=query, lang='en', tweet_mode='extended').items(100):
         media = ''

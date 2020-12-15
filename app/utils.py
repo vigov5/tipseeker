@@ -13,7 +13,8 @@ HEADERS = {
     'Sec-Fetch-User': '?1'
 }
 
-RED_ONE = ['medium.com', 'itnext.io', 'blog.cobalt.io', 'engineering.salesforce.com']
+RED_ONE = ['medium.com', 'itnext.io',
+           'blog.cobalt.io', 'engineering.salesforce.com']
 BLUE_ONE = ['youtube.com']
 
 
@@ -30,7 +31,7 @@ def get_title(content):
 
 def link_expander(url, origin='twitter'):
     try:
-        resp = requests.get(url, headers=HEADERS, timeout=30, verify=False)
+        resp = requests.get(url, headers=HEADERS, timeout=15, verify=False)
         return (get_title(resp.text), resp.url)
     except Exception as e:
         return ('BAD_LINK', '')
