@@ -32,6 +32,7 @@ class Link(db.Model):
     read = Column(Integer, nullable=False, default=LINK.UNREAD)
     kind = Column(Integer, nullable=False, default=LINK.KIND_LINK)
     category = Column(Integer, nullable=False, default=LINK.CATEGORY_WEB)
+    rating = Column(Integer, nullable=True, default=LINK.NORMAL)
     status = Column(Integer, nullable=False, default=LINK.STATUS_PENDING)
     created_at = Column(DateTime, default=datetime.datetime.now)
     updated_at = Column(DateTime,

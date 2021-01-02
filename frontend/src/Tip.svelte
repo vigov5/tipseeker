@@ -29,20 +29,32 @@
           <div
             class="absolute top-0 right-0 flex items-center justify-center h-10 m-2">
             <button
-              on:click={(e) => markRead(tip)}
-              class="flex items-center justify-center invisible w-10 h-10 p-0 border-0 rounded-full group-hover:visible group-hover:inline-flex group-hover:text-white group-hover:bg-green-400">
+              on:click={(e) => markRead(tip, true)}
+              class="flex items-center justify-center invisible w-10 h-10 p-0 mr-2 border-0 rounded-full group-hover:visible group-hover:inline-flex group-hover:text-white group-hover:bg-green-400">
               <svg
                 class="w-6 h-6"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg">
-                <path
+                xmlns="http://www.w3.org/2000/svg"><path
                   stroke-linecap="round"
                   stroke-linejoin="round"
                   stroke-width="2"
-                  d="M5 13l4 4L19 7" />
-              </svg>
+                  d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5" /></svg>
+            </button>
+            <button
+              on:click={(e) => markRead(tip, false)}
+              class="flex items-center justify-center invisible w-10 h-10 p-0 border-0 rounded-full group-hover:visible group-hover:inline-flex group-hover:text-white group-hover:bg-red-400">
+              <svg
+                class="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"><path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M10 14H5.236a2 2 0 01-1.789-2.894l3.5-7A2 2 0 018.736 3h4.018a2 2 0 01.485.06l3.76.94m-7 10v5a2 2 0 002 2h.096c.5 0 .905-.405.905-.904 0-.715.211-1.413.608-2.008L17 13V4m-7 10h2m5-10h2a2 2 0 012 2v6a2 2 0 01-2 2h-2.5" /></svg>
             </button>
           </div>
         {/if}
@@ -74,13 +86,12 @@
           class="mb-4 -mt-1 text-xs font-medium tracking-widest text-gray-500 title-font">
           {tip.created_at}
         </h2>
-        <p class="mb-3 leading-relaxed whitespace-pre-wrap">
+        <p class="mb-4 leading-relaxed whitespace-pre-wrap">
           {@html tip.content}
         </p>
-        <div class="flex flex-wrap items-center justify-between">
-          <span class="px-1 text-white bg-indigo-500 rounded-lg">
-            {CATEGORYS[tip.category]}
-          </span>
+        <div
+          class="flex flex-wrap items-center justify-between pt-3 border-t-2 border-dotted">
+          <div><span class="px-1 font-semibold"> ID: {tip.id} </span></div>
           <div>
             <span
               class="py-1 pr-3 mr-3 text-sm leading-none text-gray-600 border-r-2 border-gray-300 lg:ml-auto md:ml-0">
@@ -136,6 +147,24 @@
                 </svg>
                 Read
               </span>
+            {/if}
+            {#if tip.read}
+              {#if tip.rating == 2}
+                <span
+                  class="inline-flex items-center py-1 pr-3 ml-auto mr-3 text-sm leading-none text-red-600 border-r-2 border-gray-300 lg:ml-auto md:ml-0">
+                  Spam
+                </span>
+              {:else if tip.rating == 1}
+                <span
+                  class="inline-flex items-center py-1 pr-3 ml-auto mr-3 text-sm leading-none text-green-500 border-r-2 border-gray-300 lg:ml-auto md:ml-0">
+                  Helpful
+                </span>
+              {:else}
+                <span
+                  class="inline-flex items-center py-1 pr-3 ml-auto mr-3 text-sm leading-none text-gray-500 border-r-2 border-gray-300 lg:ml-auto md:ml-0">
+                  Normal
+                </span>
+              {/if}
             {/if}
             <span
               class="inline-flex items-center text-sm leading-none text-gray-600">

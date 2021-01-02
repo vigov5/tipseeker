@@ -28,6 +28,7 @@ def mark_read():
     try:
         params = request.get_json(force=True)
         link = Link.query.get(params['id'])
+        link.rating = LINK.HELPFUL if params['rating'] else LINK.SPAM
         link.read = LINK.READ
         db.session.add(link)
         db.session.commit()
