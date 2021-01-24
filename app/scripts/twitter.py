@@ -1,3 +1,5 @@
+import pdb
+from six import python_2_unicode_compatible
 from app.scripts import cron_module
 from app.utils import get_title, link_expander, clean_up_url
 from app.link import constants as LINK
@@ -14,15 +16,17 @@ urllib3.disable_warnings()
 
 @cron_module.cli.command('twitter')
 def fetch_twitter():
+    MIN_LIKED = 20
     query = app.config['TWITTER_QUERY']
     print('Start fetch twitter with query {}'.format(query))
     cached_contents = [content for (
-        content, ) in Link.query.with_entities(Link.content).order_by(Link.id.desc()).limit(100)]
+        content, ) in Link.query.with_entities(Link.content).order_by(Link.id.desc()).limit(500)]
 
-    for tweet_info in tweepy.Cursor(twitter_api.search, q=query, lang='en', tweet_mode='extended').items(100):
+    for tweet_info in tweepy.Cursor(twitter_api.search, q=query, lang='en', tweet_mode='extended').items(50):
         media = ''
         links = []
         origin_tweet = ''
+        liked_count = 0
         if 'retweeted_status' in dir(tweet_info):
             tweet = tweet_info.retweeted_status.full_text
             if 'media' in tweet_info.retweeted_status.entities:
@@ -34,6 +38,8 @@ def fetch_twitter():
 
             origin_tweet = "https://twitter.com/i/web/status/{}".format(
                 tweet_info.retweeted_status.id)
+            liked_count = tweet_info.retweeted_status.retweet_count + \
+                tweet_info.retweeted_status.favorite_count
         else:
             tweet = tweet_info.full_text
             if 'media' in tweet_info.entities:
@@ -44,6 +50,7 @@ def fetch_twitter():
                 tweet = tweet.replace(u['url'], u['expanded_url'])
             origin_tweet = "https://twitter.com/i/web/status/{}".format(
                 tweet_info.id)
+            liked_count = tweet_info.retweet_count + tweet_info.favorite_count
 
         tweet_content = tweet.encode('utf-8')
 
@@ -64,7 +71,7 @@ def fetch_twitter():
             link_info = {}
             (title, final_url) = link_expander(item)
             final_url = clean_up_url(final_url)
-            if Link.query.filter(Link.url == final_url).first() or similar_content or ignored_content:
+            if Link.query.filter(Link.url == final_url).first() or similar_content or ignored_content or liked_count < MIN_LIKED:
                 created = True
                 pass
             else:
@@ -85,13 +92,14 @@ def fetch_twitter():
 
         same_url = Link.query.filter(Link.url == tweet_url).first() != None
 
-        print("{} -> Created: {}, Similar content: {}, Same URL: {}, Ignored: {} => {}".format(
-            tweet_url, created, similar_content, same_url, ignored_content,
-            not created and not similar_content and not same_url and not ignored_content
+        cond = not created and not similar_content and not same_url and not ignored_content and liked_count > MIN_LIKED
+        print("{} -> Created: {}, Similar content: {}, Same URL: {}, Ignored: {}, Liked: {} => {}".format(
+            tweet_url, created, similar_content, same_url, ignored_content, liked_count,
+            cond
         ))
         cached_contents.append(tweet_content)
 
-        if not created and not similar_content and not same_url and not ignored_content:
+        if cond:
             link_info = {}
             link_info['title'] = 'Tip from Twitter'
             link_info['url'] = tweet_url
