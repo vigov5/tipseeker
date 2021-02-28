@@ -1,6 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
-from urllib.parse import urljoin, urlparse, urlunparse
+from urllib.parse import urlencode, urljoin, urlparse, urlunparse, parse_qs, urlencode
 
 HEADERS = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:83.0) Gecko/20100101 Firefox/83.0',
@@ -12,10 +12,6 @@ HEADERS = {
     'Sec-Fetch-Site': 'cross-site',
     'Sec-Fetch-User': '?1'
 }
-
-RED_ONE = ['medium.com', 'itnext.io',
-           'blog.cobalt.io', 'engineering.salesforce.com']
-BLUE_ONE = ['youtube.com']
 
 
 def get_title(content):
@@ -37,11 +33,18 @@ def link_expander(url, origin='twitter'):
         return ('BAD_LINK', '')
 
 
+BLACK_LISTED = ['source', 'gi', 'feature', '__twitter_impression',
+                'gws_rd', 'ab_channel', 'feature', 'utm_source', 'ref', '_p', 'referralCode', 'utm_medium',
+                'utm_campaign', 'app', 'couponCode', 'fbclid', 'utm_content', '_saasquatch', 'igshid', 'linkCode', 'refcode']
+
+
 def clean_up_url(url):
     parsed = urlparse(url)
-    if parsed.netloc in RED_ONE:
-        return urljoin(url, parsed.path)
-    elif parsed.netloc in BLUE_ONE:
-        return urlunparse([parsed.scheme, parsed.netloc, '', '', parsed.query, ''])
-    else:
-        return url
+    qs = parse_qs(parsed.query)
+    keys = [k for k in qs.keys()]
+    for k in keys:
+        if k in BLACK_LISTED:
+            del qs[k]
+    new_query = urlencode(qs, doseq=1)
+
+    return urlunparse([parsed.scheme, parsed.netloc, parsed.path, parsed.params, new_query, parsed.fragment])
