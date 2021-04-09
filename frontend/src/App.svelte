@@ -6,9 +6,11 @@
   import { BASE_URL } from "./config";
 
   let tips = [];
+  let reads = [];
   let page = 1;
   let newBatch = [];
   let show_all = false;
+  let show_read = false;
   let viewing_media = "";
   let unread_count = 0;
 
@@ -19,8 +21,15 @@
     unread_count = resp.unread_count;
   };
 
+  const fetchOnlyRead = async () => {
+    const res = await fetch(`${BASE_URL}/link/show_read?page=${page}`);
+    let resp = await res.json();
+    newBatch = resp.links;
+  };
+
   onMount(() => {
     fetchData();
+    fetchOnlyRead();
   });
 
   const setMedia = (media) => {
@@ -49,6 +58,7 @@
   };
 
   $: tips = [...new Set([...tips, ...newBatch])];
+  $: reads = [...new Set([...reads, ...newBatch])];
 </script>
 
 <style>
@@ -59,7 +69,7 @@
 </svelte:head>
 
 <main class="min-h-screen -m-2 bg-gray-200">
-  <Nav bind:show_all {unread_count} />
+  <Nav bind:show_all bind:show_read {unread_count} />
   {#if viewing_media}
     <div
       class="fixed z-50 max-h-screen origin-center transform -translate-x-1/2 -translate-y-1/2"
@@ -85,15 +95,23 @@
         {#if !tips}
           No content
         {:else}
-          {#each tips as tip}
-            <Tip {tip} {show_all} {setMedia} {markRead} />
-          {/each}
+          {#if show_all}
+            {#each tips as tip}
+              <Tip {tip} {show_all} {setMedia} {markRead}/>
+            {/each}
+          {/if}
+          {#if show_read}
+            {#each reads as tip}
+              <Tip {tip} show_all={show_read} {setMedia} {markRead}/>
+            {/each}
+          {/if}
           <InfiniteScroll
             window={true}
             threshold={100}
             on:loadMore={() => {
               page++;
               fetchData();
+              fetchOnlyRead();
             }} />
         {/if}
       </div>
