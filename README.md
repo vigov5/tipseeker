@@ -5,6 +5,7 @@ Simple app to gather all #bugbountytips from Twitter and Telegram.
 ![screenshot](https://i.imgur.com/4BuzAM5l.png)
 
 ## Backend
+
 - require Python >= 3.6
 
 ```
@@ -41,6 +42,14 @@ Every 5 minutes
 ```
 */5 * * * * FLASK_APP=/path/to/tipseeker/app /path/to/tipseeker/venv/bin/python3 -m flask cron telegram
 ```
+
+## Docker
+
+- Copy `config.sample.py` to `config.py` and update values. `CONSUMER_KEY` and `CONSUMER_SECRET` is your Twitter app creds.
+- Create DB, change DB creds in `SQLALCHEMY_DATABASE_URI`
+  copy `frontend/src/config.sample.js` to `frontend/src/config.js` and change `BASE_URL` to deployed API URL.
+- Change enviroment variables database in `docker-compose.yml`
+- Run `docker-compose up -d`
 
 ## Roadmap
 
