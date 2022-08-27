@@ -5,10 +5,10 @@ services:
     build: db/.
     container_name: tipseeker_db
     environment:
-      - MYSQL_ROOT_PASSWORD=spiritblossom
+      - MYSQL_ROOT_PASSWORD=password
       - MYSQL_DATABASE=tipseeker
-      - MYSQL_USER=minhtuan
-      - MYSQL_PASSWORD=admin@123123
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=password
     volumes:
       - db:/var/lib/mysql
   backend:
@@ -17,7 +17,6 @@ services:
     container_name: tipseeker_app
     depends_on:
       - database
-    # command: alembic upgrade head
     ports:
       - "5000:5000"
   frontend:
