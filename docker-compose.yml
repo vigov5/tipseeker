@@ -1,0 +1,31 @@
+version: "3.5"
+services:
+  database:
+    image: tipseeker_db
+    build: db/.
+    container_name: tipseeker_db
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_DATABASE=tipseeker
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=password
+    volumes:
+      - db:/var/lib/mysql
+  backend:
+    image: tipseeker_app
+    build: .
+    container_name: tipseeker_app
+    depends_on:
+      - database
+    ports:
+      - "5000:5000"
+  frontend:
+    image: tipseeker_frontend
+    build: src/frontend/.
+    container_name: tipseeker_frontend
+    ports:
+      - "80:80"
+    environment:
+      - BASE_URL=http://localhost:5000
+volumes:
+  db:
